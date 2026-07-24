@@ -14,5 +14,6 @@ export const validateContact = (req, res, next) => {
         });
     }
 
+
     next();
 };
