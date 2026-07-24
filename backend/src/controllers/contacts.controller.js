@@ -1,22 +1,24 @@
+import Contact from "../models/Contact.js";
+
 let contacts = [];
 
-export const getContacts = (req, res) => {
+export const getContacts = async (req, res) => {
+
+    const contacts = await Contact.findAll();
+
     res.json(contacts);
+
 };
 
-export const createContact = (req, res) => {
+export const createContact = async (req, res) => {
 
     const { name, phone, email } = req.body;
 
-    const newContact = {
-        id: contacts.length + 1,
+   const newContact = await Contact.create({
         name,
         phone,
         email
-    };
-
-
-    contacts.push(newContact);
+    });   
 
 
     res.status(201).json(newContact);

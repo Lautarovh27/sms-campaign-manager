@@ -1,7 +1,24 @@
 import app from "./app.js";
+import sequelize from "./config/database.js";
+import "./models/Contact.js";
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-    console.log(`Servidor iniciado en http://localhost:${PORT}`);
-});
+const startServer = async () => {
+    try {
+        await sequelize.authenticate();
+        console.log("✅ Conexión a MySQL establecida.");
+        await sequelize.sync();
+        console.log("✅ Modelos sincronizados con la base de datos.");
+
+        app.listen(PORT, () => {
+            console.log(`🚀 Servidor iniciado en http://localhost:${PORT}`);
+        });
+
+    } catch (error) {
+        console.error("Error al conectar con MySQL:");
+        console.error(error.message);
+    }
+};
+
+startServer();
