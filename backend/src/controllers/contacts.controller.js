@@ -1,16 +1,7 @@
+let contacts = [];
+
 export const getContacts = (req, res) => {
-    res.json([
-        {
-            id: 1,
-            name: "Juan",
-            phone: "1122334455"
-        },
-        {
-            id: 2,
-            name: "Maria",
-            phone: "1199887766"
-        }
-    ]);
+    res.json(contacts);
 };
 
 export const createContact = (req, res) => {
@@ -18,11 +9,16 @@ export const createContact = (req, res) => {
     const { name, phone, email } = req.body;
 
     const newContact = {
-        id: 3,
+        id: contacts.length + 1,
         name,
         phone,
         email
     };
 
+
+    contacts.push(newContact);
+
+
     res.status(201).json(newContact);
+
 };
