@@ -1,20 +1,22 @@
-import Contact from "../models/Contact.js";
+import { findContactByIdService } from "../services/contact.service.js";
+import { getAllContactsService } from "../services/contact.service.js";
+import { createContactService } from "../services/contact.service.js";
+import { updateContactService } from "../services/contact.service.js";
+import { deleteContactService } from "../services/contact.service.js";
 
-let contacts = [];
+export const getContactsController = async (req, res) => {
 
-export const getContacts = async (req, res) => {
-
-    const contacts = await Contact.findAll();
+    const contacts = await getAllContactsService();
 
     res.json(contacts);
 
 };
 
-export const createContact = async (req, res) => {
+export const createContactController = async (req, res) => {
 
     const { name, phone, email } = req.body;
 
-    const newContact = await Contact.create({
+    const newContact = await createContactService({
         name,
         phone,
         email
@@ -25,52 +27,58 @@ export const createContact = async (req, res) => {
 
 };
 
-export const getContactById = async (req,res)   => {
-    const { id } = req.params;
-    const contact = await Contact.findByPk(id);
+export const getContactByIdController = async (req, res, next) => {
 
-    if(!contact){
-        return res.status(404).json({
-            error: "Contacto no encontrado"
-        });
+    try {
+
+        const { id } = req.params;
+
+        const contact = await findContactByIdService(id);
+
+        res.json(contact);
+
+    } catch (error) {
+
+        next(error);
+
     }
 
-    res.json(contact);
 };
 
-export const updateContact = async (req, res) => {
-    const { id } = req.params;
-    const contact = await Contact.findByPk(id);
+export const updateContactController = async (req, res, next) => {
 
-    if(!contact){
-        return res.status(404).json({
-            error: "Contacto no encontrado"
-        });
+    try {
+
+        const { id } = req.params;
+
+        const contact = await updateContactService(id, req.body);
+
+        res.json(contact);
+
+    } catch (error) {
+
+        next(error);
+
     }
 
-    const { name, phone, email } = req.body;
-
-   contact.name = name;
-   contact.phone = phone;
-   contact.email = email;
-
-    await contact.save();
-
-    res.json(contact);
 };
 
-export const deleteContact = async (req, res) => {
-    const { id } = req.params;
-    const contact = await Contact.findByPk(id);
+export const deleteContactController = async (req, res, next) => {
 
-    if(!contact){
-        return res.status(404).json({
-            error: "Contacto no encontrado"
+    try {
+
+        const { id } = req.params;
+
+        await deleteContactService(id);
+
+        res.json({
+            message: "Contacto eliminado"
         });
+
+    } catch (error) {
+
+        next(error);
+
     }
 
-    await contact.destroy();
-    res.json({ 
-        message: "Contacto eliminado"
-    });
 };
