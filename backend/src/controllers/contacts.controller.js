@@ -1,14 +1,24 @@
-import { findContactByIdService } from "../services/contact.service.js";
-import { getAllContactsService } from "../services/contact.service.js";
-import { createContactService } from "../services/contact.service.js";
-import { updateContactService } from "../services/contact.service.js";
-import { deleteContactService } from "../services/contact.service.js";
+import {
+    findContactByIdService,
+    getAllContactsService,
+    createContactService,
+    updateContactService,
+    deleteContactService,
+} from "../services/contact.service.js";
 
 export const getContactsController = async (req, res) => {
 
-    const contacts = await getAllContactsService();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
 
-    res.json(contacts);
+    const result = await getAllContactsService(limit, offset);
+
+    res.json({
+        page,
+        limit,
+        ...result
+    });
 
 };
 
