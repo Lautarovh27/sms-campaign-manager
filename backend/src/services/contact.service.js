@@ -1,5 +1,6 @@
 import Contact from "../models/Contact.js";
 import AppError from "../errors/AppError.js";
+import { Op } from "sequelize";
 
 export const findContactByIdService = async (id) => {
 
@@ -13,7 +14,7 @@ export const findContactByIdService = async (id) => {
 
 };
 
-export const getAllContactsService = async (limit, offset) => {
+export const getAllContactsService = async (limit, offset, search) => {
 
   const contacts = await Contact.findAll({
         limit,

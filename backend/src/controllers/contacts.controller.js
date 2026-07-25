@@ -13,12 +13,13 @@ export const getContactsController = async (req, res) => {
     const offset = (page - 1) * limit;
 
     const result = await getAllContactsService(limit, offset);
-
+    
     res.json({
         page,
         limit,
         ...result
     });
+    console.log(req.user);  
 
 };
 
