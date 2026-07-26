@@ -25,11 +25,6 @@ export const loginController = async (req, res) => {
 
     const token = await loginService(username, password);
 
-    if (!token) {
-        return res.status(401).json({
-            error: "Invalid credentials"
-        });
-    }
 
     res.json({
         token
