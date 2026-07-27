@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
 
+
 const Campaign = sequelize.define(
     "Campaign", 
     {
@@ -28,5 +29,7 @@ const Campaign = sequelize.define(
         timestamps: true
     }
 );
+
+
 
 export default Campaign;

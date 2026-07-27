@@ -4,6 +4,7 @@ import {
     createContactService,
     updateContactService,
     deleteContactService,
+    getContactCampaignsService,
 } from "../services/contact.service.js";
 
 export const getContactsController = async (req, res) => {
@@ -93,3 +94,13 @@ export const deleteContactController = async (req, res, next) => {
     }
 
 };
+
+export const getContactCampaignsController = async (req, res, next) => {
+    try {
+        const {contactId} = req.params;
+        const campaigns = await getContactCampaignsService(contactId);
+        res.json(campaigns);
+    } catch (error) {
+        next(error);
+    }
+}

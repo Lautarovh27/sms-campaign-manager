@@ -1,10 +1,11 @@
 import Contact from "../models/Contact.js";
 import AppError from "../errors/AppError.js";
+import Campaign from "../models/Campaign.js";
 import { Op } from "sequelize";
 
-export const findContactByIdService = async (id) => {
+export const findContactByIdService = async (contactId) => {
 
-    const contact = await Contact.findByPk(id);
+    const contact = await Contact.findByPk(contactId);
 
     if (!contact) {
         throw new AppError("Contact not found", 404);
@@ -41,9 +42,9 @@ export const createContactService = async (data) => {
 
 };
 
-export const updateContactService = async (id, data) => {
+export const updateContactService = async (contactId, data) => {
 
-    const contact = await findContactByIdService(id);
+    const contact = await findContactByIdService(contactId);
 
     const { name, phone, email } = data;
 
@@ -57,10 +58,16 @@ export const updateContactService = async (id, data) => {
 
 };
 
-export const deleteContactService = async (id) => {
+export const deleteContactService = async (contactId) => {
 
-    const contact = await findContactByIdService(id);
+    const contact = await findContactByIdService(contactId);
 
     await contact.destroy();
 
 };
+
+export const getContactCampaignsService = async(contactId) => {
+    const contact = await findContactByIdService(contactId);
+    const campaigns = await contact.getCampaigns();
+    return campaigns;
+}

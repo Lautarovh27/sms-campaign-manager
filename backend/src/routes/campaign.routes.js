@@ -4,7 +4,9 @@ import {
     getCampaignByIdController,
     createCampaignController,
     deleteCampaignController,
-    updateCampaignController
+    updateCampaignController,
+    addContactToCampaignController,
+    getCampaignContactsController
  } from "../controllers/campaign.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 
@@ -12,9 +14,11 @@ const router = Router();
 
 router.get("/", authMiddleware, getCampaignsController);
 router.post("/", authMiddleware, createCampaignController);
-router.get("/:id", authMiddleware, getCampaignByIdController);
-router.put("/:id", authMiddleware, updateCampaignController);
-router.delete("/:id", authMiddleware, deleteCampaignController);
+router.get("/:campaignId", authMiddleware, getCampaignByIdController);
+router.put("/:campaignId", authMiddleware, updateCampaignController);
+router.delete("/:campaignId", authMiddleware, deleteCampaignController);
+router.post("/:campaignId/contacts", authMiddleware, addContactToCampaignController);
+router.get("/:campaignId/contacts", authMiddleware, getCampaignContactsController);
 
 
 export default router;

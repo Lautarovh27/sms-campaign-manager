@@ -3,8 +3,11 @@ import {
     findCampaignByIdService,
     createCampaignService,
     updateCampaignService,
-    deleteCampaignService
+    deleteCampaignService,
+    addContactToCampaignService,
+    getCampaignContactsService
 } from "../services/campaign.service.js";
+import { getContactCampaignsService } from "../services/contact.service.js";
 
 export const getCampaignsController = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
@@ -23,8 +26,8 @@ export const getCampaignsController = async (req, res) => {
 
 export const getCampaignByIdController = async (req, res, next) => {
     try {
-            const { id } = req.params;
-            const campaign = await findCampaignByIdService(id);
+            const { campaignId } = req.params;
+            const campaign = await findCampaignByIdService(campaignId);
             res.json(campaign);
     
         } catch (error) {
@@ -48,9 +51,9 @@ export const createCampaignController = async (req, res, next) => {
 export const deleteCampaignController = async (req, res, next) => {
     try {
 
-        const { id } = req.params;
+        const { campaignId } = req.params;
 
-        await deleteCampaignService(id);
+        await deleteCampaignService(campaignId);
 
         res.json({
             message: "Campaña eliminada"
@@ -63,9 +66,36 @@ export const deleteCampaignController = async (req, res, next) => {
 
 export const updateCampaignController = async (req, res, next) => {
     try {
-        const {id} = req.params;
-        const campaign = await updateCampaignService(id, req.body);
+        const {campaignId} = req.params;
+        const campaign = await updateCampaignService(campaignId, req.body);
         res.json(campaign);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const addContactToCampaignController = async (req, res, next) => { 
+    try {
+        const { campaignId } = req.params;
+        const { contactId } = req.body;
+
+        await addContactToCampaignService(campaignId, contactId);
+
+        res.json({
+            message: "Contacto agregado a la campaña"
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getCampaignContactsController = async (req, res, next) => {
+    try {
+        const { campaignId } = req.params;
+
+        const contacts = await getCampaignContactsService(campaignId);
+        res.json(contacts);
     } catch (error) {
         next(error);
     }
