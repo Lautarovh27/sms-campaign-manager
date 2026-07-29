@@ -4,9 +4,9 @@ const API_URL = "http://localhost:3000/auth";
 
 export const login = async (username, password) => {
 
-    const response = await axios.post(`${API_URL}/login`, {
+    const response = await axios.post(API_URL + "/login", {
         username,
-        password
+        password,
     });
 
     return response.data;

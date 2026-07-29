@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import AppError from "../errors/AppError.js";
 
 export const registerService = async (data) => {
 
@@ -23,14 +24,19 @@ export const loginService = async (username, password) => {
             username
         }
     });
+
     if (!user) {
-        return null;
+        throw new AppError("Usuario o contraseña incorrectos", 401);
     }
 
     const isValidPassword = await bcrypt.compare(
         password,
         user.password
     );
+
+    if (!isValidPassword) {
+        throw new AppError("Usuario o contraseña incorrectos", 401);
+    }
 
     const token = jwt.sign(
         {
@@ -42,8 +48,6 @@ export const loginService = async (username, password) => {
             expiresIn: "1h"
         }
     );
+
     return token;
-
- 
-
 };

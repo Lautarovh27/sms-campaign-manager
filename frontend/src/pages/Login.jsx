@@ -1,20 +1,23 @@
 import { useState } from "react";
 import { login } from "../services/auth.service";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
     const handleLogin = async () => {
         try {
             const data = await login(username, password);
-
+            localStorage.setItem("token", data.token);
+            console.log("Token guardado:", localStorage.getItem("token"));
             localStorage.setItem("token", data.token);
 
-            console.log("Token guardado:", localStorage.getItem("token"));
+            navigate("/dashboard");
 
         } catch (error) {
-            console.error(error);
+            alert("Usuario o contraseña incorrectos");
         }
     }
     return (
