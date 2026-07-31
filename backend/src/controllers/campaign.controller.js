@@ -42,7 +42,9 @@ export const createCampaignController = async (req, res, next) => {
 
         res.status(201).json(campaign);
     } catch (error) {
-        next(error);
+        res.status(400).json({
+            message: error.message
+        });
     }
 };
 
@@ -70,7 +72,9 @@ export const updateCampaignController = async (req, res, next) => {
         const campaign = await updateCampaignService(campaignId, req.body);
         res.json(campaign);
     } catch (error) {
-        next(error);
+        res.status(400).json({
+            message: error.message
+        });
     }
 }
 

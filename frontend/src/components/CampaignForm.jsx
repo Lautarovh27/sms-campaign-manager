@@ -10,6 +10,7 @@ function CampaignForm({
     const [name, setName] = useState("");
     const [message, setMessage] = useState("");
     const [status, setStatus] = useState("draft");
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
 
@@ -31,23 +32,38 @@ function CampaignForm({
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        if(!selectedCampaign){
+
+        
+        const newErrors = {};
+
+        if (!name.trim()) {
+            newErrors.name = "El nombre es obligatorio";
+        }
+
+        if (!message.trim()) {
+            newErrors.message = "El mensaje es obligatorio";
+        }
+
+        setErrors(newErrors);
+
+        if (Object.keys(newErrors).length > 0) {
+            return;
+        }
+
+        
+        if (selectedCampaign) {
+            onUpdate(selectedCampaign.id, {
+                name,
+                message,
+                status,
+            });
+        } else {
             onCreate({
                 name,
                 message,
-                status
+                status,
             });
-        } else {
-            onUpdate(
-                selectedCampaign.id,
-                {
-                    name,
-                    message,
-                    status
-                }
-            )
         }
-
     };
 
     return (
@@ -57,14 +73,36 @@ function CampaignForm({
                 type="text"
                 placeholder="Nombre"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
-            />
+                onChange={(e) => {
+                    setName(e.target.value);
 
+                    setErrors({
+                        ...errors,
+                        name: ""
+                    });
+                }}
+            />
+            {errors.name && (
+                <p>{errors.name}</p>
+            )}
             <textarea
                 placeholder="Mensaje"
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                maxLength={160}
+                onChange={(e) => {
+                    setMessage(e.target.value);
+
+                    setErrors({
+                        ...errors,
+                        message: ""
+                    });
+                }}
             />
+            <p>{message.length} / 160</p>
+
+            {errors.message && (
+                <p>{errors.message}</p>
+            )}
 
             <select
                 value={status}

@@ -31,6 +31,9 @@ export const findCampaignByIdService = async (campaignId) => {
 }
 
 export const createCampaignService = async (data) => {
+    if (data.message.length > 160) {
+        throw new Error("El mensaje no puede superar los 160 caracteres");
+    }
     return await Campaign.create(data);
 }
 
@@ -39,13 +42,16 @@ export const updateCampaignService = async (campaignId, data) => {
     if(!campaign){
         throw new AppError("Campaign not found", 404);
     }
-
+    
     const { name, message, status } = data;
-
+    
     campaign.name = name;
     campaign.message = message;
     campaign.status = status;
-
+    
+    if (data.message.length > 160) {
+        throw new Error("El mensaje no puede superar los 160 caracteres");
+    }
     await campaign.save();
 
     return campaign;
