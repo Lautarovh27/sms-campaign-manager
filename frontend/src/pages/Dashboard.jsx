@@ -1,10 +1,77 @@
 import { useEffect, useState } from "react";
-import { getCampaigns } from "../services/campaign.service";
+import { 
+    getCampaigns,
+    deleteCampaign,
+    createCampaign,
+    updateCampaign
+ } from "../services/campaign.service";
+import CampaignTable from "../components/CampaignTable";
+import CampaignForm from "../components/CampaignForm";
 
 function Dashboard() {
     const [campaigns, setCampaigns] = useState([]);
+    const [selectedCampaign, setSelectedCampaign] = useState(null);
+    
+    const handleDeleteCampaign = async (campaignId) => {
+        const confirmed = window.confirm(
+            "¿Seguro que querés eliminar esta campaña?"
+        );
+        if (!confirmed) {
+            return;
+        }
+
+        await deleteCampaign(campaignId);
+        setCampaigns(
+        campaigns.filter(
+            campaign => campaign.id !== campaignId
+        )
+    )
+    };
+
+    const handleCreateCampaign = async (campaignData) => {
+
+        const campaign = await createCampaign(campaignData);
+
+        setCampaigns([
+            ...campaigns,
+            campaign
+        ]);
+
+    };
+
+    const handleEditCampaign = async (campaign) => {
+        console.log(campaign);
+        setSelectedCampaign(campaign);
+    }
+
+    const handleUpdateCampaign = async (
+        campaignId,
+        campaignData
+    ) => {
+
+        const updatedCampaign = await updateCampaign(
+            campaignId,
+            campaignData
+        );
+
+        setCampaigns(
+            campaigns.map(campaign =>
+                campaign.id === campaignId
+                    ? updatedCampaign
+                    : campaign
+            )
+        );
+
+        setSelectedCampaign(null);
+
+    };
+
+    const handleCancelEdit = () => {
+        setSelectedCampaign(null);
+    };
 
     useEffect(() => {
+
         const loadCampaigns = async () => {
 
             console.log(localStorage.getItem("token"));
@@ -26,20 +93,20 @@ function Dashboard() {
 
             <p>Total de campañas: {campaigns.length}</p>
 
-            <button>Nueva campaña</button>
+            <CampaignForm
+                onCreate={handleCreateCampaign}
+                onUpdate={handleUpdateCampaign}
+                onCancel={handleCancelEdit}
+                selectedCampaign={selectedCampaign}
+            />
 
             <ul>
 
-                {campaigns.map((campaign) => (
-
-                    <li key={campaign.id}>
-
-                        {campaign.name}
-
-                    </li>
-
-                ))}
-
+                <CampaignTable 
+                campaigns={campaigns}
+                onDelete={handleDeleteCampaign}
+                onEdit={handleEditCampaign}/>
+            
             </ul>
         </div>
     );
