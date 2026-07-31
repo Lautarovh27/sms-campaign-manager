@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { 
     getCampaigns,
@@ -8,7 +9,10 @@ import {
 import CampaignTable from "../components/CampaignTable";
 import CampaignForm from "../components/CampaignForm";
 
+
 function Dashboard() {
+    const navigate = useNavigate();
+
     const [campaigns, setCampaigns] = useState([]);
     const [selectedCampaign, setSelectedCampaign] = useState(null);
     
@@ -81,9 +85,11 @@ function Dashboard() {
 
         };
 
-    loadCampaigns();    
+        loadCampaigns();    
 
     }, []);
+
+    
 
     return (
         <div>
@@ -108,6 +114,10 @@ function Dashboard() {
                 onEdit={handleEditCampaign}/>
             
             </ul>
+
+            <button onClick={() => navigate("/contacts")}>
+                Contactos
+            </button>
         </div>
     );
 }
