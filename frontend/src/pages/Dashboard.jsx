@@ -26,10 +26,10 @@ function Dashboard() {
 
         await deleteCampaign(campaignId);
         setCampaigns(
-        campaigns.filter(
-            campaign => campaign.id !== campaignId
+            campaigns.filter(
+                campaign => campaign.id !== campaignId
+            )
         )
-    )
     };
 
     const handleCreateCampaign = async (campaignData) => {
@@ -43,9 +43,9 @@ function Dashboard() {
 
     };
 
-    const handleEditCampaign = async (campaign) => {
-        console.log(campaign);
-        setSelectedCampaign(campaign);
+    const handleEditCampaign = async (campaignId) => {
+        console.log(campaignId);
+        setSelectedCampaign(campaignId);
     }
 
     const handleUpdateCampaign = async (

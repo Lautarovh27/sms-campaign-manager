@@ -1,4 +1,4 @@
-function ContactTable({ contacts }) {
+function ContactTable({ contacts, onDelete, onEdit }) {
     console.log(contacts);
     return (
         <table>
@@ -15,9 +15,18 @@ function ContactTable({ contacts }) {
                 {contacts.map((contact) => {
                     return (
                         <tr key={contact.id}>
+                            <td>{contact.id}</td>
                             <td>{contact.name}</td>
                             <td>{contact.phone}</td>
                             <td>{contact.email}</td>
+                            <td>
+                                    <button onClick={() => onEdit(contact)}>
+                                        Editar
+                                    </button>
+                                    <button onClick={() => onDelete(contact.id)}>
+                                        Eliminar
+                                    </button>
+                            </td>
                         </tr>
                     );
                 })}

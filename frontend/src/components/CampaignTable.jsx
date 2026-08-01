@@ -24,11 +24,7 @@ function CampaignTable({ campaigns, onDelete, onEdit }) {
                             >
                                 Editar
                             </button>
-                            <button 
-                                onClick={() => onDelete(campaign.id)}
-                            >
-                                Eliminar
-                            </button>
+                            
                         </td>
                     </tr>
                 ))}
