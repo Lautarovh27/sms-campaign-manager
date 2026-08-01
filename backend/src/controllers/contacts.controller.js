@@ -43,9 +43,9 @@ export const getContactByIdController = async (req, res, next) => {
 
     try {
 
-        const { id } = req.params;
+        const { contactId } = req.params;
 
-        const contact = await findContactByIdService(id);
+        const contact = await findContactByIdService(contactId);
 
         res.json(contact);
 
@@ -61,9 +61,9 @@ export const updateContactController = async (req, res, next) => {
 
     try {
 
-        const { id } = req.params;
+        const { contactId } = req.params;
 
-        const contact = await updateContactService(id, req.body);
+        const contact = await updateContactService(contactId, req.body);
 
         res.json(contact);
 
@@ -78,21 +78,15 @@ export const updateContactController = async (req, res, next) => {
 export const deleteContactController = async (req, res, next) => {
 
     try {
-
-        const { id } = req.params;
-
-        await deleteContactService(id);
-
+        const { contactId } = req.params;
+        await deleteContactService(contactId);
         res.json({
             message: "Contacto eliminado"
         });
 
     } catch (error) {
-
         next(error);
-
     }
-
 };
 
 export const getContactCampaignsController = async (req, res, next) => {
