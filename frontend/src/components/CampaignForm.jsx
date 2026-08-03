@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 
-function CampaignForm({ 
-    onCreate, 
-    onUpdate, 
+function CampaignForm({
+    onCreate,
+    onUpdate,
     onCancel,
-    selectedCampaign
- }) {
+    selectedCampaign,
+    contacts
+}) {
 
     const [name, setName] = useState("");
     const [message, setMessage] = useState("");
     const [status, setStatus] = useState("draft");
     const [errors, setErrors] = useState({});
+    const [selectedContacts, setSelectedContacts] = useState([]);
 
     useEffect(() => {
 
@@ -19,12 +21,16 @@ function CampaignForm({
             setName(selectedCampaign.name);
             setMessage(selectedCampaign.message);
             setStatus(selectedCampaign.status);
+            setSelectedContacts (
+                selectedCampaign.Contacts.map(contact => contact.id)
+            );
 
         } else {
 
             setName("");
             setMessage("");
             setStatus("draft");
+            setSelectedContacts([]);
 
         }
 
@@ -33,7 +39,7 @@ function CampaignForm({
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        
+
         const newErrors = {};
 
         if (!name.trim()) {
@@ -50,19 +56,33 @@ function CampaignForm({
             return;
         }
 
-        
+
         if (selectedCampaign) {
             onUpdate(selectedCampaign.id, {
                 name,
                 message,
                 status,
+                contactIds: selectedContacts,
             });
         } else {
             onCreate({
                 name,
                 message,
                 status,
+                contactIds: selectedContacts,
             });
+        }
+    };
+
+    const handleContactChange = (contactId) => {
+        if (selectedContacts.includes(contactId)) {
+            const updated = selectedContacts.filter(id => id !== contactId);
+            console.log(updated);
+            setSelectedContacts(updated);
+        } else {
+            const updated = [...selectedContacts, contactId];
+            console.log(updated);
+            setSelectedContacts(updated);
         }
     };
 
@@ -104,6 +124,20 @@ function CampaignForm({
                 <p>{errors.message}</p>
             )}
 
+            <h3>Seleccionar contactos</h3>
+
+            {contacts.map((contact) => (
+                <div key={contact.id}>
+                    <label>
+                        <input
+                            type="checkbox"
+                            checked={selectedContacts.includes(contact.id)}
+                            onChange={() => handleContactChange(contact.id)}
+                        />
+                        {contact.name}
+                    </label>
+                </div>
+            ))}
             <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
@@ -115,7 +149,7 @@ function CampaignForm({
             <button type="submit">
                 {selectedCampaign ? "Actualizar campaña" : "Crear campaña"}
             </button>
-            
+
             {selectedCampaign && (
                 <button
                     type="button"

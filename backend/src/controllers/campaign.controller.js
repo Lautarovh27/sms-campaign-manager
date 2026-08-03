@@ -13,12 +13,14 @@ export const getCampaignsController = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const offset = (page - 1) * limit;
+    const search = req.query.search || "";
     
-    const result = await getAllCampaignsService(limit, offset);
+    const result = await getAllCampaignsService(limit, offset, search);
         
     res.json({
         page,
         limit,
+        search,
         ...result
     });
     console.log(req.user);  

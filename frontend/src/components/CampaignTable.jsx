@@ -8,6 +8,7 @@ function CampaignTable({ campaigns, onDelete, onEdit }) {
                     <th>Nombre</th>
                     <th>Mensaje</th>
                     <th>Estado</th>
+                    <th>Contactos</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -18,6 +19,11 @@ function CampaignTable({ campaigns, onDelete, onEdit }) {
                         <td>{campaign.name}</td>
                         <td>{campaign.message}</td>
                         <td>{campaign.status}</td>
+                        <td>
+                            {campaign.Contacts?.length
+                                ? campaign.Contacts.map((contact) => contact.name).join(", ")
+                                : "Sin contactos"}
+                        </td>
                         <td>
                             <button 
                                 onClick={() => onEdit(campaign)}

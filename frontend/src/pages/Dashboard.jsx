@@ -8,13 +8,14 @@ import {
  } from "../services/campaign.service";
 import CampaignTable from "../components/CampaignTable";
 import CampaignForm from "../components/CampaignForm";
+import { getContacts } from "../services/contact.service";
 
 
 function Dashboard() {
     const navigate = useNavigate();
-
     const [campaigns, setCampaigns] = useState([]);
     const [selectedCampaign, setSelectedCampaign] = useState(null);
+    const [contacts, setContacts] = useState([]);
     
     const handleDeleteCampaign = async (campaignId) => {
         const confirmed = window.confirm(
@@ -43,9 +44,9 @@ function Dashboard() {
 
     };
 
-    const handleEditCampaign = async (campaignId) => {
-        console.log(campaignId);
-        setSelectedCampaign(campaignId);
+    const handleEditCampaign = async (campaign) => {
+        console.log(campaign);
+        setSelectedCampaign(campaign);
     }
 
     const handleUpdateCampaign = async (
@@ -58,34 +59,30 @@ function Dashboard() {
             campaignData
         );
 
-        setCampaigns(
-            campaigns.map(campaign =>
-                campaign.id === campaignId
-                    ? updatedCampaign
-                    : campaign
-            )
-        );
+        await loadCampaigns();
 
-        setSelectedCampaign(null);
+            setSelectedCampaign(null);
 
-    };
+        };
 
     const handleCancelEdit = () => {
         setSelectedCampaign(null);
     };
 
+    const loadCampaigns = async () => {
+        const data = await getCampaigns();
+        setCampaigns(data.campaigns);
+    };
+
+    const loadContacts = async () => {
+        const data = await getContacts();
+        setContacts(data.contacts);
+    };
+
     useEffect(() => {
 
-        const loadCampaigns = async () => {
-
-            console.log(localStorage.getItem("token"));
-            const data = await getCampaigns();
-
-            setCampaigns(data.campaigns);
-
-        };
-
         loadCampaigns();    
+        loadContacts();
 
     }, []);
 
@@ -104,6 +101,7 @@ function Dashboard() {
                 onUpdate={handleUpdateCampaign}
                 onCancel={handleCancelEdit}
                 selectedCampaign={selectedCampaign}
+                contacts={contacts}
             />
 
             <ul>
