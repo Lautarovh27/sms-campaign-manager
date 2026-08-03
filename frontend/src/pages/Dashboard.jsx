@@ -16,6 +16,10 @@ function Dashboard() {
     const [campaigns, setCampaigns] = useState([]);
     const [selectedCampaign, setSelectedCampaign] = useState(null);
     const [contacts, setContacts] = useState([]);
+    const [search, setSearch] = useState("");
+
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     
     const handleDeleteCampaign = async (campaignId) => {
         const confirmed = window.confirm(
@@ -70,9 +74,16 @@ function Dashboard() {
     };
 
     const loadCampaigns = async () => {
-        const data = await getCampaigns();
+
+        const data = await getCampaigns(
+            page,
+            10,
+            search
+        );
+
         setCampaigns(data.campaigns);
-    };
+        setTotalPages(data.totalPages);
+    };  
 
     const loadContacts = async () => {
         const data = await getContacts();
@@ -80,19 +91,27 @@ function Dashboard() {
     };
 
     useEffect(() => {
-
-        loadCampaigns();    
         loadContacts();
-
     }, []);
-
-    
+    useEffect(() => {
+        loadCampaigns();
+    }, [page, search]);
+   
 
     return (
         <div>
             <h1>SMS Campaign Manager</h1>
 
             <h2>Campañas</h2>
+                <input
+                    type="text"
+                    placeholder="Buscar campaña..."
+                    value={search}
+                    onChange={(e) => {
+                        setSearch(e.target.value);
+                        setPage(1);
+                    }}
+                />
 
             <p>Total de campañas: {campaigns.length}</p>
 
@@ -109,7 +128,27 @@ function Dashboard() {
                 <CampaignTable 
                 campaigns={campaigns}
                 onDelete={handleDeleteCampaign}
-                onEdit={handleEditCampaign}/>
+                onEdit={handleEditCampaign}
+                />
+                <div>
+                    <button
+                        onClick={() => setPage(page - 1)}
+                        disabled={page === 1}
+                    >
+                        ◀ Anterior
+                    </button>
+
+                    <span>
+                        Página {page} de {totalPages}
+                    </span>
+
+                    <button
+                        onClick={() => setPage(page + 1)}
+                        disabled={page === totalPages}
+                    >
+                        Siguiente ▶
+                    </button>
+                </div>
             
             </ul>
 

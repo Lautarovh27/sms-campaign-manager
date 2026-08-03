@@ -2,11 +2,17 @@ import AppError from "../errors/AppError.js";
 import Campaign from "../models/Campaign.js";
 import { Contact } from "../models/index.js";
 import { findContactByIdService } from "./contact.service.js";
+import { Op } from "sequelize";
 
 
 
 export const getAllCampaignsService = async (limit, offset, search) => {
-    const campaigns = await Campaign.findAll({
+   const campaigns = await Campaign.findAll({
+        where: {
+            name: {
+                [Op.like]: `%${search}%`
+            }
+        },
         limit,
         offset,
         include: [
@@ -15,9 +21,15 @@ export const getAllCampaignsService = async (limit, offset, search) => {
                 attributes: ["id", "name"]
             }
         ]
-    }); 
+    });
     
-    const total = await Campaign.count();
+    const total = await Campaign.count({
+        where: {
+            name: {
+                [Op.like]: `%${search}%`
+            }
+        }
+    });
 
     const totalPages = Math.ceil(total / limit);
 

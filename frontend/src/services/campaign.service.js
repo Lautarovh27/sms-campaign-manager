@@ -2,11 +2,20 @@ import axios from "axios";
 
 const API_URL = "http://localhost:3000/campaigns";
 
-export const getCampaigns = async () => {
+export const getCampaigns = async (
+        page = 1,
+        limit = 10,
+        search = ""
+    ) => {
 
     const token = localStorage.getItem("token");
 
     const response = await axios.get(API_URL, {
+        params: {
+            page,
+            limit,
+            search
+        },
         headers: {
             Authorization: `Bearer ${token}`
         }
