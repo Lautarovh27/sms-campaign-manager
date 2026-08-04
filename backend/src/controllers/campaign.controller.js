@@ -5,7 +5,8 @@ import {
     updateCampaignService,
     deleteCampaignService,
     addContactToCampaignService,
-    getCampaignContactsService
+    getCampaignContactsService,
+    getDashboardStatsService
 } from "../services/campaign.service.js";
 import { getContactCampaignsService } from "../services/contact.service.js";
 
@@ -106,3 +107,15 @@ export const getCampaignContactsController = async (req, res, next) => {
         next(error);
     }
 }
+
+export const getDashboardStatsController = async (req, res, next) => {
+    try {
+
+        const stats = await getDashboardStatsService();
+
+        res.json(stats);
+
+    } catch (error) {
+        next(error);
+    }
+};

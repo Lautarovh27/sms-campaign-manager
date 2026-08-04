@@ -7,12 +7,16 @@ import { Op } from "sequelize";
 
 
 export const getAllCampaignsService = async (limit, offset, search) => {
-   const campaigns = await Campaign.findAll({
+
+    const campaigns = await Campaign.findAll({
         where: {
             name: {
                 [Op.like]: `%${search}%`
             }
         },
+        order: [
+            ["createdAt", "DESC"]
+        ],
         limit,
         offset,
         include: [
@@ -22,7 +26,7 @@ export const getAllCampaignsService = async (limit, offset, search) => {
             }
         ]
     });
-    
+
     const total = await Campaign.count({
         where: {
             name: {
@@ -38,7 +42,7 @@ export const getAllCampaignsService = async (limit, offset, search) => {
         total,
         totalPages
     };
-}
+};
 
 export const findCampaignByIdService = async (campaignId) => {
     const campaign = await Campaign.findByPk(campaignId);
@@ -116,5 +120,29 @@ export const getCampaignContactsService = async (campaignId) => {
 
 };
 
+export const getDashboardStatsService = async () => {
 
+    const totalCampaigns = await Campaign.count();
+
+    const draftCampaigns = await Campaign.count({
+        where: {
+            status: "draft"
+        }
+    });
+
+    const sentCampaigns = await Campaign.count({
+        where: {
+            status: "sent"
+        }
+    });
+
+    const totalContacts = await Contact.count();
+
+    return {
+        totalCampaigns,
+        draftCampaigns,
+        sentCampaigns,
+        totalContacts
+    };
+};
 

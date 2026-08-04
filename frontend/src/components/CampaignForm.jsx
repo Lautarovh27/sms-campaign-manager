@@ -7,7 +7,6 @@ function CampaignForm({
     selectedCampaign,
     contacts
 }) {
-
     const [name, setName] = useState("");
     const [message, setMessage] = useState("");
     const [status, setStatus] = useState("draft");
@@ -15,30 +14,38 @@ function CampaignForm({
     const [selectedContacts, setSelectedContacts] = useState([]);
 
     useEffect(() => {
-
         if (selectedCampaign) {
-
             setName(selectedCampaign.name);
             setMessage(selectedCampaign.message);
             setStatus(selectedCampaign.status);
-            setSelectedContacts (
-                selectedCampaign.Contacts.map(contact => contact.id)
+            setSelectedContacts(
+                selectedCampaign.Contacts
+                    ? selectedCampaign.Contacts.map(contact => contact.id)
+                    : []
             );
-
         } else {
-
             setName("");
             setMessage("");
             setStatus("draft");
             setSelectedContacts([]);
-
         }
-
     }, [selectedCampaign]);
+
+    const handleContactChange = (contactId) => {
+        if (selectedContacts.includes(contactId)) {
+            setSelectedContacts(
+                selectedContacts.filter(id => id !== contactId)
+            );
+        } else {
+            setSelectedContacts([
+                ...selectedContacts,
+                contactId
+            ]);
+        }
+    };
 
     const handleSubmit = (event) => {
         event.preventDefault();
-
 
         const newErrors = {};
 
@@ -56,109 +63,156 @@ function CampaignForm({
             return;
         }
 
+        const campaignData = {
+            name,
+            message,
+            status,
+            contactIds: selectedContacts
+        };
 
         if (selectedCampaign) {
-            onUpdate(selectedCampaign.id, {
-                name,
-                message,
-                status,
-                contactIds: selectedContacts,
-            });
+            onUpdate(selectedCampaign.id, campaignData);
         } else {
-            onCreate({
-                name,
-                message,
-                status,
-                contactIds: selectedContacts,
-            });
-        }
-    };
-
-    const handleContactChange = (contactId) => {
-        if (selectedContacts.includes(contactId)) {
-            const updated = selectedContacts.filter(id => id !== contactId);
-            console.log(updated);
-            setSelectedContacts(updated);
-        } else {
-            const updated = [...selectedContacts, contactId];
-            console.log(updated);
-            setSelectedContacts(updated);
+            onCreate(campaignData);
         }
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form
+            onSubmit={handleSubmit}
+            className="bg-white rounded-xl shadow-md p-6 mt-6 space-y-6"
+        >
+            <h2 className="text-2xl font-semibold">
+                {selectedCampaign
+                    ? "Editar campaña"
+                    : "Nueva campaña"}
+            </h2>
 
-            <input
-                type="text"
-                placeholder="Nombre"
-                value={name}
-                onChange={(e) => {
-                    setName(e.target.value);
+            <div>
+                <label className="block mb-2 font-medium">
+                    Nombre
+                </label>
 
-                    setErrors({
-                        ...errors,
-                        name: ""
-                    });
-                }}
-            />
-            {errors.name && (
-                <p>{errors.name}</p>
-            )}
-            <textarea
-                placeholder="Mensaje"
-                value={message}
-                maxLength={160}
-                onChange={(e) => {
-                    setMessage(e.target.value);
+                <input
+                    type="text"
+                    placeholder="Nombre de la campaña"
+                    value={name}
+                    onChange={(e) => {
+                        setName(e.target.value);
 
-                    setErrors({
-                        ...errors,
-                        message: ""
-                    });
-                }}
-            />
-            <p>{message.length} / 160</p>
+                        setErrors({
+                            ...errors,
+                            name: ""
+                        });
+                    }}
+                    className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
 
-            {errors.message && (
-                <p>{errors.message}</p>
-            )}
+                {errors.name && (
+                    <p className="text-red-500 text-sm mt-1">
+                        {errors.name}
+                    </p>
+                )}
+            </div>
 
-            <h3>Seleccionar contactos</h3>
+            <div>
+                <label className="block mb-2 font-medium">
+                    Mensaje
+                </label>
 
-            {contacts.map((contact) => (
-                <div key={contact.id}>
-                    <label>
-                        <input
-                            type="checkbox"
-                            checked={selectedContacts.includes(contact.id)}
-                            onChange={() => handleContactChange(contact.id)}
-                        />
-                        {contact.name}
-                    </label>
+                <textarea
+                    placeholder="Escribí el mensaje..."
+                    value={message}
+                    maxLength={160}
+                    onChange={(e) => {
+                        setMessage(e.target.value);
+
+                        setErrors({
+                            ...errors,
+                            message: ""
+                        });
+                    }}
+                    className="w-full border rounded-lg p-3 h-28 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+
+                <div className="flex justify-between mt-1">
+                    {errors.message ? (
+                        <p className="text-red-500 text-sm">
+                            {errors.message}
+                        </p>
+                    ) : (
+                        <span></span>
+                    )}
+
+                    <p className="text-sm text-gray-500">
+                        {message.length}/160
+                    </p>
                 </div>
-            ))}
-            <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-            >
-                <option value="draft">Draft</option>
-                <option value="sent">Sent</option>
-            </select>
+            </div>
 
-            <button type="submit">
-                {selectedCampaign ? "Actualizar campaña" : "Crear campaña"}
-            </button>
+            <div>
+                <label className="block mb-2 font-medium">
+                    Contactos
+                </label>
 
-            {selectedCampaign && (
-                <button
-                    type="button"
-                    onClick={onCancel}
+                <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto border rounded-lg p-3">
+                    {contacts.map((contact) => (
+                        <label
+                            key={contact.id}
+                            className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 rounded p-2"
+                        >
+                            <input
+                                type="checkbox"
+                                checked={selectedContacts.includes(contact.id)}
+                                onChange={() => handleContactChange(contact.id)}
+                            />
+
+                            {contact.name}
+                        </label>
+                    ))}
+                </div>
+            </div>
+
+            <div>
+                <label className="block mb-2 font-medium">
+                    Estado
+                </label>
+
+                <select
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                    className="w-full border rounded-lg p-3"
                 >
-                    Cancelar
-                </button>
-            )}
+                    <option value="draft">
+                        Draft
+                    </option>
 
+                    <option value="sent">
+                        Sent
+                    </option>
+                </select>
+            </div>
+
+            <div className="flex gap-3">
+                <button
+                    type="submit"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition"
+                >
+                    {selectedCampaign
+                        ? "Actualizar campaña"
+                        : "Crear campaña"}
+                </button>
+
+                {selectedCampaign && (
+                    <button
+                        type="button"
+                        onClick={onCancel}
+                        className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition"
+                    >
+                        Cancelar
+                    </button>
+                )}
+            </div>
         </form>
     );
 }

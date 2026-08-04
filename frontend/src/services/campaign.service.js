@@ -70,3 +70,19 @@ export const updateCampaign = async (campaignId, campaignData) => {
 
     return response.data;
 };
+
+export const getDashboardStats = async () => {
+
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(
+        `${API_URL}/stats`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    return response.data;
+};
