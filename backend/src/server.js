@@ -8,12 +8,14 @@ const PORT = process.env.PORT || 3000;
 const startServer = async () => {
     try {
         await sequelize.authenticate();
-        console.log("✅ Conexión a MySQL establecida.");
-        await sequelize.sync();
-        console.log("✅ Modelos sincronizados con la base de datos.");
+        
+        await sequelize.sync({
+            alter: true
+        });
+        
 
         app.listen(PORT, () => {
-            console.log(`🚀 Servidor iniciado en http://localhost:${PORT}`);
+            
         });
 
     } catch (error) {

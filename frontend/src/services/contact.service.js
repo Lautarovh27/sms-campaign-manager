@@ -30,7 +30,7 @@ export const deleteContact = async (contactId) => {
 export const createContact = async (contactData) => {
 
     const token = localStorage.getItem("token");
-    console.log("Token:", token);
+    
 
     const response = await axios.post(
         API_URL,

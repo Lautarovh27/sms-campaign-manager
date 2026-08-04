@@ -23,6 +23,10 @@ const Campaign = sequelize.define(
             allowNull: false,
             defaultValue: "draft"
         },
+        sentAt: {
+            type: DataTypes.DATE,
+            allowNull: true
+        },
     },
     {
         tableName: "campaigns",

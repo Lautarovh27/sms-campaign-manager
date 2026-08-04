@@ -39,7 +39,7 @@ export const deleteCampaign = async (campaignId) => {
 export const createCampaign = async (campaignData) => {
 
     const token = localStorage.getItem("token");
-    console.log("Token:", token);
+    
 
     const response = await axios.post(
         API_URL,
@@ -77,6 +77,22 @@ export const getDashboardStats = async () => {
 
     const response = await axios.get(
         `${API_URL}/stats`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    return response.data;
+};
+
+export const sendCampaign = async (campaignId) => {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.patch(
+        `${API_URL}/${campaignId}/send`,
+        {},
         {
             headers: {
                 Authorization: `Bearer ${token}`

@@ -46,7 +46,7 @@ export const getAllCampaignsService = async (limit, offset, search) => {
 
 export const findCampaignByIdService = async (campaignId) => {
     const campaign = await Campaign.findByPk(campaignId);
-    if(!campaign){
+    if (!campaign) {
         throw new AppError("Campaign not found", 404);
     }
 
@@ -60,7 +60,7 @@ export const createCampaignService = async (data) => {
     }
 
     const { contactIds, ...campaignData } = data;
-    
+
     const campaign = await Campaign.create(campaignData);
     if (contactIds && contactIds.length > 0) {
         await campaign.setContacts(contactIds);
@@ -71,16 +71,16 @@ export const createCampaignService = async (data) => {
 
 export const updateCampaignService = async (campaignId, data) => {
     const campaign = await Campaign.findByPk(campaignId);
-    if(!campaign){
+    if (!campaign) {
         throw new AppError("Campaign not found", 404);
     }
-    
+
     const { contactIds, name, message, status } = data;
-    
+
     campaign.name = name;
     campaign.message = message;
     campaign.status = status;
-    
+
     if (data.message.length > 160) {
         throw new Error("El mensaje no puede superar los 160 caracteres");
     }
@@ -146,3 +146,17 @@ export const getDashboardStatsService = async () => {
     };
 };
 
+export const sendCampaignService = async (campaignId) => {
+    const campaign = await Campaign.findByPk(campaignId);
+
+    if (!campaign) {
+        throw new AppError("Campaign not found", 404);
+    }
+
+    campaign.status = "sent";
+    campaign.sentAt = new Date();
+
+    await campaign.save();
+
+    return campaign;
+};

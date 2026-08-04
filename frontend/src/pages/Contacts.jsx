@@ -1,34 +1,59 @@
 import { useEffect, useState } from "react";
-import { deleteContact, getContacts, updateContact } from "../services/contact.service";
+import Swal from "sweetalert2";
+import { deleteContact, getContacts, updateContact, createContact } from "../services/contact.service";
 import ContactTable from "../components/ContactTable";
 import ContactForm from "../components/ContactForm";
+import Navbar from "../components/Navbar";
 
 function Contacts() {
     const [contacts, setContacts] = useState([]);
     const [selectedContact, setSelectedContact] = useState(null);
 
     const handleEditContact = async (contact) => {
-        console.log("contact", contact);
         setSelectedContact(contact);
     }
 
     const handleDeleteContact = async (contactId) => {
-        const confirmed = window.confirm(
-            "¿Seguro que querés eliminar este contacto?"
-        );
-        if (!confirmed) {
+        const result = await Swal.fire({
+            title: "¿Eliminar contacto?",
+            text: "Esta acción no se puede deshacer.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar",
+            confirmButtonColor: "#dc2626"
+        });
+
+        if (!result.isConfirmed) {
             return;
         }
+
         await deleteContact(contactId);
+
         setContacts(
             contacts.filter((contact) => contact.id !== contactId)
         );
+
+        await Swal.fire({
+            icon: "success",
+            title: "Contacto eliminado",
+            text: "El contacto fue eliminado correctamente.",
+            showConfirmButton: false,
+            timer: 1500
+        });
     };
 
     const handleCreateContact = async (contactData) => {
 
         const contact = await createContact(contactData);
         setContacts([...contacts, contact]);
+        await Swal.fire({
+            icon: "success",
+            title: "Contacto creado",
+            text: "El contacto fue creado correctamente.",
+            showConfirmButton: false,
+            timer: 1500
+        });
 
     };
 
@@ -41,6 +66,13 @@ function Contacts() {
             )
         );
         setSelectedContact(null);
+        await Swal.fire({
+            icon: "success",
+            title: "Contacto actualizado",
+            text: "Los cambios fueron guardados.",
+            showConfirmButton: false,
+            timer: 1500
+        });
 
     };
 
@@ -49,39 +81,66 @@ function Contacts() {
     };
 
     useEffect(() => {
-    
-            const loadContacts = async () => {
-                console.log("Entro a loadContacts");
-                
-                const data = await getContacts();
-                console.log("Respuesta backend", data);
-                
-                setContacts(data.contacts);
-    
-            };
-    
-            loadContacts();    
-    
-        }, []);
-    
+
+        const loadContacts = async () => {
+
+
+            const data = await getContacts();
+
+
+            setContacts(data.contacts);
+
+        };
+
+        loadContacts();
+
+    }, []);
+
     return (
-        <div>
-            <h1>Contactos</h1>
-            <ContactTable 
-            contacts={contacts} 
-            onDelete={handleDeleteContact} 
-            onEdit={handleEditContact}
-            />
-            <ContactForm
-                onCreate={handleCreateContact}
-                onUpdate={handleUpdateContact}
-                onCancel={handleCancelEdit}
-                selectedContact={selectedContact}
-            />
-        </div>
+        <>
+            <Navbar />
+
+            <div className="min-h-screen bg-gray-100 p-8">
+
+                <div className="max-w-7xl mx-auto">
+
+                    <h1 className="text-4xl font-bold text-gray-800 mb-8">
+                        👥 Contactos
+                    </h1>
+
+                    <div className="grid lg:grid-cols-3 gap-8">
+
+                        <div className="lg:col-span-1">
+
+                            <ContactForm
+                                onCreate={handleCreateContact}
+                                onUpdate={handleUpdateContact}
+                                onCancel={handleCancelEdit}
+                                selectedContact={selectedContact}
+                            />
+
+                        </div>
+
+                        <div className="lg:col-span-2">
+
+                            <ContactTable
+                                contacts={contacts}
+                                onDelete={handleDeleteContact}
+                                onEdit={handleEditContact}
+                            />
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </>
     );
 
-    
+
 }
 
 export default Contacts;

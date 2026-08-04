@@ -20,7 +20,7 @@ export const getContactsController = async (req, res) => {
         limit,
         ...result
     });
-    console.log(req.user);  
+    
 
 };
 

@@ -10,7 +10,7 @@ function ContactForm({
     const [phone, setPhone] = useState("");
     const [email, setEmail] = useState("");
     const [errors, setErrors] = useState({});
-    console.log("selectedContact recibido:", selectedContact);
+    
 
 
     useEffect(() => {
