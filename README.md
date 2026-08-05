@@ -9,7 +9,7 @@ El proyecto permite crear campañas, administrar contactos, enviar campañas y v
 ## 🚀 Demo
 
 🌐 Frontend:
-https://TU-APP.vercel.app](https://sms-campaign-manager-nine.vercel.app/
+https://sms-campaign-manager-nine.vercel.app](https://sms-campaign-manager-nine.vercel.app/
 
 ⚙️ Backend API:
 https://sms-campaign-manager-backend.onrender.com
