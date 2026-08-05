@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:3000/campaigns";
+const API_URL = import.meta.env.VITE_API_URL + "/campaigns";
 
 export const getCampaigns = async (
         page = 1,
